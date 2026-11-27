@@ -1,5 +1,5 @@
 // Version erhöhen, wenn sich Dateien ändern → Handy lädt neue Version
-const CACHE = "trainingsplan-v6";
+const CACHE = "trainingsplan-v7";
 const ASSETS = [
   "./",
   "index.html",
@@ -10,7 +10,8 @@ const ASSETS = [
   "body.js",
   "manifest.webmanifest",
   "icons/icon-192.png",
-  "icons/icon-512.png"
+  "icons/icon-512.png",
+  "icons/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", e => {
