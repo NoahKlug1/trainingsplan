@@ -421,7 +421,7 @@ function renderPickerList(q) {
   const list = document.getElementById("pkList");
   const query = slug(q);
   const inDay = new Set(draft.exercises.map(ex => slug(ex.name)));
-  const match = (cat, ex) => !query || [cat, ex.name, ...(ex.muscles || []).map(m => MUSCLES[m])].some(t => slug(t).includes(query));
+  const match = (cat, ex) => !query || [cat, ex.name, ex.detail, ...(ex.muscles || []).map(m => MUSCLES[m])].some(t => slug(t).includes(query));
   const html = Object.entries(EXERCISE_LIBRARY).map(([cat, items]) => {
     const rows = items.map((ex, i) => ({ ex, i })).filter(({ ex }) => match(cat, ex));
     if (!rows.length) return "";

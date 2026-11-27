@@ -1,5 +1,5 @@
 // Version erhöhen, wenn sich Dateien ändern → Handy lädt neue Version
-const CACHE = "trainingsplan-v9";
+const CACHE = "trainingsplan-v10";
 const ASSETS = [
   "./",
   "index.html",
@@ -33,8 +33,10 @@ self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   // Supabase-Anfragen (Login, Daten) nie cachen
   if (new URL(e.request.url).hostname.endsWith(".supabase.co")) return;
+  // eigene Dateien am HTTP-Cache vorbei neu prüfen, damit Updates sofort ankommen
+  const own = new URL(e.request.url).origin === self.location.origin;
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, own ? { cache: "no-cache" } : undefined)
       .then(res => {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, copy));

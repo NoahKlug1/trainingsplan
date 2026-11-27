@@ -77,6 +77,24 @@ const EXERCISE_LIBRARY = {
     { name: "Fingerstrecker mit Gummi", detail: "2×25", muscles: ["forearms"] },
     { name: "Handgelenk-Curls", detail: "2×15", weight: true, muscles: ["forearms"] },
     { name: "Schulterblatt-Liegestütze", detail: "2×12", muscles: ["chest", "traps"] }
+  ],
+  // Dehnen zählt bewusst nicht in die Muskel-Heatmap (muscles leer), der Bereich steht im Detail
+  "Dehnen": [
+    { name: "Unterarmbeuger dehnen", detail: "Unterarme · 2× 30 s pro Seite, Handfläche nach vorne, Finger zurückziehen", muscles: [] },
+    { name: "Unterarmstrecker dehnen", detail: "Unterarme · 2× 30 s pro Seite, Faust nach unten beugen", muscles: [] },
+    { name: "Brust am Türrahmen", detail: "Brust, Schultern · 2× 30 s pro Seite", muscles: [] },
+    { name: "Schulter Cross-Body", detail: "Hintere Schulter · 2× 30 s pro Seite", muscles: [] },
+    { name: "Lat-Dehnung an der Stange", detail: "Latissimus · 2× 30 s, locker hängen oder seitlich lehnen", muscles: [] },
+    { name: "Trizeps über Kopf", detail: "Trizeps · 2× 30 s pro Seite", muscles: [] },
+    { name: "Nacken & Trapez", detail: "Nacken · 2× 20 s pro Seite, Kopf seitlich neigen", muscles: [] },
+    { name: "Schulter-Dislocates", detail: "Schultern, Mobilität · 2×10 mit Band oder Stock", muscles: [] },
+    { name: "Brustwirbelsäule rotieren", detail: "Oberer Rücken, Mobilität · 2×8 pro Seite im Vierfüßlerstand", muscles: [] },
+    { name: "Katze-Kuh", detail: "Rücken, Mobilität · 10 langsame Wiederholungen", muscles: [] },
+    { name: "Frog Stretch", detail: "Hüfte, Adduktoren · 2× 45 s, wichtig fürs Eindrehen an der Wand", muscles: [] },
+    { name: "Taube", detail: "Hüfte, Gesäß · 2× 45 s pro Seite", muscles: [] },
+    { name: "Hüftbeuger im Ausfallschritt", detail: "Hüfte · 2× 30 s pro Seite", muscles: [] },
+    { name: "Beinbeuger dehnen", detail: "Beinbeuger · 2× 30 s pro Seite", muscles: [] },
+    { name: "Waden an der Wand", detail: "Waden · 2× 30 s pro Seite", muscles: [] }
   ]
 };
 
