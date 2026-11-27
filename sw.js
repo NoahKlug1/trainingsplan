@@ -1,5 +1,5 @@
 // Version erhöhen, wenn sich Dateien ändern → Handy lädt neue Version
-const CACHE = "trainingsplan-v8";
+const CACHE = "trainingsplan-v9";
 const ASSETS = [
   "./",
   "index.html",
