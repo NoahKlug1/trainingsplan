@@ -361,3 +361,23 @@ body.locked { overflow: hidden; }
 .chart .area { fill: var(--accent); fill-opacity: .1; }
 .chart .pt { fill: var(--surface); stroke: var(--accent); stroke-width: 1.8; }
 .chart .pt.last { fill: var(--accent); }
+
+/* Übungsauswahl */
+.search {
+  display: block; width: 100%; margin: 4px 0 14px; padding: 11px 14px; font-size: .95rem;
+  border: 1px solid transparent; border-radius: 12px; background: var(--field);
+}
+.search:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.pk-custom { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); font-weight: 600; }
+.pk-custom svg { width: 18px; height: 18px; }
+#pkCustom > svg { width: 16px; height: 16px; color: var(--faint); }
+.pk-h { margin: 22px 0 8px; }
+.pk-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pk-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pk-name { font-weight: 500; }
+.pk-sub { font-size: .8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-add { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-strong); display: grid; place-items: center; }
+.pk-add svg { width: 16px; height: 16px; stroke-width: 2.2; }
+.pk-in { flex: none; font-size: .75rem; color: var(--accent); font-weight: 500; }
+.ed-ex.flash { animation: flash 1.2s ease; }
+@keyframes flash { 0%, 30% { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); } 100% { border-color: var(--line); box-shadow: none; } }

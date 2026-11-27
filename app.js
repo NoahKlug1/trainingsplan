@@ -391,12 +391,62 @@ function renderEditor() {
   el.querySelectorAll("[data-up]").forEach(b => b.addEventListener("click", () => swapEx(+b.dataset.up, -1)));
   el.querySelectorAll("[data-down]").forEach(b => b.addEventListener("click", () => swapEx(+b.dataset.down, 1)));
   el.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => { draft.exercises.splice(+b.dataset.del, 1); renderEditor(); }));
-  el.querySelector("#edAdd").addEventListener("click", () => {
-    draft.exercises.push(blankExercise());
-    renderEditor();
-    const names = el.querySelectorAll('[data-field="name"]:not([data-path*="alt"])');
-    names[names.length - 1].focus();
-  });
+  el.querySelector("#edAdd").addEventListener("click", openPicker);
+}
+
+/* ---------- Übungsauswahl ---------- */
+function openPicker() {
+  const el = document.getElementById("editor");
+  el.innerHTML = `
+    <div class="sheet-head">
+      <button class="link muted" data-back>Zurück</button>
+      <h3>Übung hinzufügen</h3>
+      <span></span>
+    </div>
+    <input class="search" id="pkSearch" type="search" placeholder="Übung oder Muskel suchen …" autocomplete="off">
+    <div class="list"><button class="list-btn row" id="pkCustom"><span class="pk-custom">${ICON.plus}Eigene Übung</span>${ICON.chevron}</button></div>
+    <div id="pkList"></div>`;
+  sheetBody.scrollTop = 0;
+  el.querySelector("[data-back]").addEventListener("click", renderEditor);
+  el.querySelector("#pkCustom").addEventListener("click", () => addExercise(blankExercise(), true));
+  const search = el.querySelector("#pkSearch");
+  search.addEventListener("input", () => renderPickerList(search.value));
+  renderPickerList("");
+}
+
+function renderPickerList(q) {
+  const list = document.getElementById("pkList");
+  const query = slug(q);
+  const inDay = new Set(draft.exercises.map(ex => slug(ex.name)));
+  const match = (cat, ex) => !query || [cat, ex.name, ...(ex.muscles || []).map(m => MUSCLES[m])].some(t => slug(t).includes(query));
+  const html = Object.entries(EXERCISE_LIBRARY).map(([cat, items]) => {
+    const rows = items.map((ex, i) => ({ ex, i })).filter(({ ex }) => match(cat, ex));
+    if (!rows.length) return "";
+    return `<h2 class="pk-h">${cat}</h2><div class="list">${rows.map(({ ex, i }) => `
+      <button class="list-btn pk-row" data-cat="${cat}" data-i="${i}">
+        <span class="pk-main">
+          <span class="pk-name">${escapeHtml(ex.name)}</span>
+          <span class="pk-sub">${escapeHtml(ex.detail)}${ex.muscles.length ? " · " + ex.muscles.map(m => MUSCLES[m]).join(", ") : ""}</span>
+        </span>
+        ${inDay.has(slug(ex.name)) ? `<span class="pk-in">im Training</span>` : `<span class="pk-add">${ICON.plus}</span>`}
+      </button>`).join("")}</div>`;
+  }).join("");
+  list.innerHTML = html || `<p class="hint center">Nichts gefunden. Leg sie als eigene Übung an.</p>`;
+  list.querySelectorAll("[data-cat]").forEach(b => b.addEventListener("click", () => {
+    const t = EXERCISE_LIBRARY[b.dataset.cat][+b.dataset.i];
+    addExercise({ id: newId(), name: t.name, detail: t.detail, weight: !!t.weight, muscles: [...t.muscles] }, false);
+  }));
+}
+
+function addExercise(ex, focusName) {
+  draft.exercises.push(ex);
+  renderEditor();
+  const cards = document.querySelectorAll(".ed-ex");
+  const last = cards[cards.length - 1];
+  last.scrollIntoView({ block: "center" });
+  last.classList.add("flash");
+  if (focusName) last.querySelector('[data-field="name"]').focus();
+  else toast(`${ex.name} hinzugefügt`);
 }
 
 function exAt(path) {

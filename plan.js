@@ -17,7 +17,67 @@ const MUSCLES = {
   lats: "Latissimus",
   triceps: "Trizeps",
   lowerback: "Unterer Rücken",
-  glutes: "Gesäß"
+  glutes: "Gesäß",
+  quads: "Oberschenkel",
+  adductors: "Adduktoren",
+  hamstrings: "Beinbeuger",
+  calves: "Waden"
+};
+
+// Vorlagen für „Übung hinzufügen“
+const EXERCISE_LIBRARY = {
+  "Klettern": [
+    { name: "Aufwärmen", detail: "15 min, leichtes Klettern", muscles: [] },
+    { name: "Bouldern am Limit", detail: "60 min, lange Pausen", muscles: ["forearms", "lats", "biceps", "abs"] },
+    { name: "Seilklettern", detail: "60–75 min", muscles: ["forearms", "lats", "biceps"] },
+    { name: "Fingerboard Max Hangs", detail: "5× 10 s, 3 min Pause", weight: true, muscles: ["forearms"] },
+    { name: "Campus Board", detail: "4 Sätze Ladders", muscles: ["forearms", "lats", "biceps"] },
+    { name: "Fingerboard Repeaters", detail: "6× 7 s an / 3 s aus", muscles: ["forearms"] },
+    { name: "Ausdauer-Traversen", detail: "3× 8 min", muscles: ["forearms", "lats"] }
+  ],
+  "Ziehen": [
+    { name: "Klimmzüge mit Zusatzgewicht", detail: "4×3–5", weight: true, muscles: ["lats", "biceps", "forearms"] },
+    { name: "Klimmzüge", detail: "3× max", muscles: ["lats", "biceps", "forearms"] },
+    { name: "Langhantelrudern", detail: "3×5", weight: true, muscles: ["lats", "traps", "reardelts", "biceps"] },
+    { name: "Kurzhantelrudern", detail: "3×8–10", weight: true, muscles: ["lats", "reardelts", "biceps"] },
+    { name: "Latziehen", detail: "3×8–10", weight: true, muscles: ["lats", "biceps"] },
+    { name: "Face Pulls", detail: "3×15", weight: true, muscles: ["reardelts", "traps"] },
+    { name: "Bizepscurls", detail: "3×10", weight: true, muscles: ["biceps", "forearms"] }
+  ],
+  "Drücken": [
+    { name: "Bankdrücken", detail: "4×3–5", weight: true, muscles: ["chest", "triceps", "shoulders"] },
+    { name: "LH-Schulterdrücken", detail: "3×5", weight: true, muscles: ["shoulders", "triceps", "traps"] },
+    { name: "KH-Schulterdrücken", detail: "3×8", weight: true, muscles: ["shoulders", "triceps"] },
+    { name: "Schrägbankdrücken", detail: "3×6–8", weight: true, muscles: ["chest", "shoulders", "triceps"] },
+    { name: "Liegestütze", detail: "3× max", muscles: ["chest", "triceps", "shoulders"] },
+    { name: "Dips", detail: "3×8–10", muscles: ["chest", "triceps"] },
+    { name: "Seitheben", detail: "3×10–12", weight: true, muscles: ["shoulders"] },
+    { name: "Trizepsdrücken", detail: "3×12", weight: true, muscles: ["triceps"] }
+  ],
+  "Beine": [
+    { name: "Kniebeugen", detail: "4×5", weight: true, muscles: ["quads", "glutes", "adductors", "lowerback"] },
+    { name: "Kreuzheben", detail: "3×5", weight: true, muscles: ["hamstrings", "glutes", "lowerback", "traps", "forearms"] },
+    { name: "Rumänisches Kreuzheben", detail: "3×8", weight: true, muscles: ["hamstrings", "glutes", "lowerback"] },
+    { name: "Bulgarian Split Squats", detail: "3×8 pro Seite", weight: true, muscles: ["quads", "glutes"] },
+    { name: "Ausfallschritte", detail: "3×10 pro Seite", weight: true, muscles: ["quads", "glutes", "adductors"] },
+    { name: "Hip Thrust", detail: "3×10", weight: true, muscles: ["glutes", "hamstrings"] },
+    { name: "Wadenheben", detail: "3×15", weight: true, muscles: ["calves"] },
+    { name: "Pistol Squats", detail: "3×5 pro Seite", muscles: ["quads", "glutes"] }
+  ],
+  "Core": [
+    { name: "Hanging Leg Raises", detail: "3×8", muscles: ["abs", "obliques"] },
+    { name: "Plank", detail: "3× 45 s", muscles: ["abs", "obliques"] },
+    { name: "Ab Wheel", detail: "3×8", muscles: ["abs", "lowerback"] },
+    { name: "Russian Twists", detail: "3×20", muscles: ["obliques", "abs"] },
+    { name: "Front Lever Progression", detail: "5× 8 s", muscles: ["lats", "abs"] }
+  ],
+  "Prehab": [
+    { name: "Außenrotation", detail: "2×15", weight: true, muscles: ["reardelts"] },
+    { name: "Reverse Flys", detail: "2×15", weight: true, muscles: ["reardelts", "traps"] },
+    { name: "Fingerstrecker mit Gummi", detail: "2×25", muscles: ["forearms"] },
+    { name: "Handgelenk-Curls", detail: "2×15", weight: true, muscles: ["forearms"] },
+    { name: "Schulterblatt-Liegestütze", detail: "2×12", muscles: ["chest", "traps"] }
+  ]
 };
 
 const DEFAULT_PLAN = {
