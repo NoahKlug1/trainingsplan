@@ -1,13 +1,13 @@
 {
   "name": "Trainingsplan – Klettern & Kraft",
   "short_name": "Training",
-  "description": "Kletter- und Krafttraining abhaken, Gewichte tracken und Protein checken.",
+  "description": "Kletter- und Krafttraining abhaken und Gewichte tracken.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#14171c",
-  "theme_color": "#14171c",
+  "background_color": "#fafaf9",
+  "theme_color": "#fafaf9",
   "lang": "de",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },

@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#14171c">
+  <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Training">
   <title>Trainingsplan</title>
   <link rel="manifest" href="manifest.webmanifest">
@@ -14,123 +15,103 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <h1 id="viewTitle">Heute</h1>
-  </header>
-
   <main>
     <!-- HEUTE -->
     <section id="view-today" class="view active">
-      <div class="daynav">
-        <button id="prevDay" class="icon-btn" aria-label="Vorheriger Tag">‹</button>
-        <div class="daylabel">
-          <div id="dayName" class="dayname"></div>
-          <div id="dayDate" class="daydate"></div>
+      <header class="head">
+        <div>
+          <div id="dayDate" class="eyebrow"></div>
+          <h1 id="dayName"></h1>
         </div>
-        <button id="nextDay" class="icon-btn" aria-label="Nächster Tag">›</button>
-      </div>
-      <div id="deloadBanner" class="banner hidden">Deload-Woche: gleiche Übungen, ca. 60 % vom Gewicht</div>
+        <div class="daynav">
+          <button id="prevDay" class="icon-btn" aria-label="Vorheriger Tag">
+            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button id="nextDay" class="icon-btn" aria-label="Nächster Tag">
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </header>
+      <div id="deloadBanner" class="notice hidden">Deload-Woche · gleiche Übungen, ca. 60 % vom Gewicht</div>
       <div id="dayCard"></div>
     </section>
 
     <!-- WOCHE -->
     <section id="view-week" class="view">
-      <div class="card">
-        <div class="row-between">
+      <header class="head">
+        <div>
+          <div id="weekLabel" class="eyebrow"></div>
+          <h1>Woche</h1>
+        </div>
+      </header>
+
+      <div class="section">
+        <div class="section-head">
           <h2>Diese Woche</h2>
-          <span id="weekScore" class="pill"></span>
+          <span id="weekScore" class="count"></span>
         </div>
         <div id="weekGrid" class="weekgrid"></div>
       </div>
-      <div class="card">
-        <h2>Verlauf</h2>
-        <p class="muted small">Erledigte Trainingstage pro Woche (Plan: 4)</p>
+
+      <div class="stats">
+        <div class="stat"><span id="statStreak" class="stat-num">0</span><span class="stat-label">Wochen in Folge mit ≥ 3 Trainings</span></div>
+        <div class="stat"><span id="statTotal" class="stat-num">0</span><span class="stat-label">Trainings gesamt</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <h2>Letzte 8 Wochen</h2>
+          <span class="count muted">Ziel 4</span>
+        </div>
         <div id="history" class="history"></div>
-      </div>
-      <div class="card stats">
-        <div><span id="statStreak" class="big">0</span><span class="muted small">Wochen in Folge ≥ 3 Trainings</span></div>
-        <div><span id="statTotal" class="big">0</span><span class="muted small">Trainings gesamt</span></div>
-      </div>
-    </section>
-
-    <!-- PROTEIN -->
-    <section id="view-protein" class="view">
-      <div class="card">
-        <div class="row-between">
-          <h2>Heute</h2>
-          <span id="proteinToday" class="pill"></span>
-        </div>
-        <div class="progress"><div id="proteinBar"></div></div>
-        <p id="proteinTargetText" class="muted small"></p>
-        <div class="quick">
-          <button class="chip" data-add="10">+10 g</button>
-          <button class="chip" data-add="20">+20 g</button>
-          <button class="chip" data-add="30">+30 g</button>
-          <button class="chip powder" id="addScoop">+ Shake</button>
-        </div>
-        <form id="proteinForm" class="inline-form">
-          <input id="proteinInput" type="number" inputmode="numeric" min="1" max="300" placeholder="g">
-          <select id="proteinSrc">
-            <option value="food">Essen</option>
-            <option value="powder">Pulver</option>
-          </select>
-          <button type="submit" class="btn">Hinzufügen</button>
-        </form>
-        <ul id="proteinList" class="entrylist"></ul>
-      </div>
-
-      <div class="card" id="recoCard">
-        <h2>Proteinpulver wieder nehmen?</h2>
-        <div id="reco"></div>
-      </div>
-
-      <div class="card">
-        <h2>Letzte 7 Tage</h2>
-        <div id="proteinChart" class="barchart"></div>
-        <p class="muted small"><span class="legend food"></span>Essen <span class="legend powder"></span>Pulver <span class="legend line"></span>Ziel</p>
       </div>
     </section>
 
     <!-- EINSTELLUNGEN -->
     <section id="view-settings" class="view">
-      <div class="card">
-        <h2>Körper & Protein</h2>
-        <label class="field">Körpergewicht (kg)
-          <input id="setWeight" type="number" inputmode="decimal" min="30" max="200" step="0.5" placeholder="z. B. 70">
-        </label>
-        <label class="field">Proteinziel (g pro kg)
-          <input id="setFactor" type="number" inputmode="decimal" min="1.2" max="2.5" step="0.1">
-        </label>
-        <label class="field">Protein pro Shake (g)
-          <input id="setScoop" type="number" inputmode="numeric" min="5" max="60" step="1">
-        </label>
-      </div>
-      <div class="card">
+      <header class="head">
+        <div>
+          <div class="eyebrow">App</div>
+          <h1>Einstellungen</h1>
+        </div>
+      </header>
+
+      <div class="section">
         <h2>Plan</h2>
-        <label class="field">Startdatum (für Deload alle 6 Wochen)
+        <label class="field">
+          <span>Startdatum</span>
           <input id="setStart" type="date">
         </label>
-        <p class="muted small">Montag: Fingerboard in ungeraden Kalenderwochen, Campus Board in geraden.</p>
+        <p class="hint">Bestimmt die Deload-Woche (jede 6. Woche). Montags wechselt Fingerboard (ungerade KW) mit Campus Board (gerade KW).</p>
       </div>
-      <div class="card">
+
+      <div class="section">
         <h2>Daten</h2>
-        <p class="muted small">Alles wird nur lokal auf diesem Gerät gespeichert. Mach ab und zu ein Backup.</p>
-        <div class="btnrow">
-          <button id="exportBtn" class="btn secondary">Backup exportieren</button>
-          <label class="btn secondary">Backup importieren
+        <p class="hint">Alles bleibt lokal auf diesem Gerät. Mach ab und zu ein Backup.</p>
+        <div class="list">
+          <button id="exportBtn" class="list-btn">Backup exportieren</button>
+          <label class="list-btn">Backup importieren
             <input id="importInput" type="file" accept="application/json" hidden>
           </label>
+          <button id="resetBtn" class="list-btn danger">Alle Daten löschen</button>
         </div>
-        <button id="resetBtn" class="btn danger">Alle Daten löschen</button>
       </div>
     </section>
   </main>
 
   <nav class="tabbar">
-    <button class="tab active" data-view="today"><span class="ti">●</span>Heute</button>
-    <button class="tab" data-view="week"><span class="ti">▦</span>Woche</button>
-    <button class="tab" data-view="protein"><span class="ti">◆</span>Protein</button>
-    <button class="tab" data-view="settings"><span class="ti">⚙</span>Einstellungen</button>
+    <button class="tab active" data-view="today">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+      Heute
+    </button>
+    <button class="tab" data-view="week">
+      <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+      Woche
+    </button>
+    <button class="tab" data-view="settings">
+      <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      Einstellungen
+    </button>
   </nav>
 
   <div id="toast" class="toast"></div>

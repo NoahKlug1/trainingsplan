@@ -1,11 +1,10 @@
 # Trainingsplan – Klettern & Kraft
 
-PWA zum Abhaken des wöchentlichen Kletter- und Krafttrainings, mit Gewichts-Tracking und Protein-Check.
+PWA zum Abhaken des wöchentlichen Kletter- und Krafttrainings mit Gewichts-Tracking.
 
 ## Features
 - **Heute**: Übungen des Tages abhaken, Gewichte eintragen („Letztes Mal“ wird angezeigt), Notiz pro Tag, mit Pfeilen durch die Tage blättern
 - **Woche**: Wochenübersicht, Verlauf der letzten 8 Wochen, Streak
-- **Protein**: Tagesziel aus Körpergewicht (Standard 1,8 g/kg), Essen und Pulver getrennt erfassen, Empfehlung, ob sich Proteinpulver lohnt (Basis: Essens-Schnitt der letzten 7 Tage gegen das Minimum von 1,6 g/kg)
 - Deload-Hinweis jede 6. Woche, Montag wechselt Fingerboard (ungerade KW) und Campus Board (gerade KW)
 - Offlinefähig, installierbar, Daten bleiben lokal (`localStorage`), Backup als JSON
 

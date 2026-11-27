@@ -3,15 +3,14 @@
 /* ---------- Speicher ---------- */
 const KEY = "trainingsplan-v1";
 const DEFAULTS = {
-  settings: { bodyweight: null, factor: 1.8, scoop: 25, startDate: null },
-  days: {},     // "YYYY-MM-DD": { done: {id:true}, weights: {id:"kg"}, note: "" }
-  protein: {}   // "YYYY-MM-DD": [{ g, src: "food"|"powder", t }]
+  settings: { startDate: null },
+  days: {}      // "YYYY-MM-DD": { done: {id:true}, weights: {id:"kg"}, note: "" }
 };
 
 function load() {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY));
-    if (raw) return { ...DEFAULTS, ...raw, settings: { ...DEFAULTS.settings, ...raw.settings } };
+    if (raw) return { days: raw.days || {}, settings: { ...DEFAULTS.settings, ...raw.settings } };
   } catch (e) { /* ignore */ }
   return structuredClone(DEFAULTS);
 }
@@ -90,29 +89,34 @@ let currentDay = today();
 function renderToday() {
   const d = currentDay, k = keyOf(d);
   const isToday = k === keyOf(today());
-  document.getElementById("dayName").textContent = isToday ? `Heute · ${DAY_NAMES[d.getDay()]}` : DAY_NAMES[d.getDay()];
-  document.getElementById("dayDate").textContent = `${fmtDate(d)} · KW ${isoWeek(d)}`;
+  document.getElementById("dayName").textContent = DAY_NAMES[d.getDay()];
+  document.getElementById("dayDate").textContent = `${isToday ? "Heute · " : ""}${fmtDate(d)} · KW ${isoWeek(d)}`;
   document.getElementById("deloadBanner").classList.toggle("hidden", !isDeloadWeek(d));
 
   const s = sessionFor(d);
   const card = document.getElementById("dayCard");
 
   if (s.rest) {
-    card.innerHTML = `<div class="card rest"><div class="emoji">😴</div><h2>Ruhetag</h2>
-      <p class="muted">${s.note ? s.note + " – " : ""}Erholung ist Teil vom Training.</p></div>`;
+    card.innerHTML = `<div class="rest">
+      <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      <div class="rest-title">Ruhetag</div>
+      <p>${s.note ? s.note + " · " : ""}Erholung ist Teil vom Training.</p></div>`;
     return;
   }
 
   const data = state.days[k] || { done: {}, weights: {}, note: "" };
   const p = progressOf(d);
   card.innerHTML = `
-    <div class="card">
-      <div class="sessionhead"><h2>${s.title}</h2><span class="pill ${p.done === p.total ? "ok" : ""}">${p.done}/${p.total}</span></div>
-      <div class="place">📍 ${s.place}</div>
-      <div id="exList"></div>
-      <button id="allDone" class="btn full">${p.done === p.total ? "Alles zurücksetzen" : "Ganzes Training erledigt ✓"}</button>
+    <div class="section">
+      <div class="session-meta">
+        <div><div class="session-title">${s.title}</div><div class="session-place">${s.place}</div></div>
+        <span class="count ${p.done === p.total ? "ok" : ""}">${p.done}/${p.total}</span>
+      </div>
+      <div class="bar"><div style="width:${p.ratio * 100}%"></div></div>
+      <ul id="exList" class="exlist"></ul>
+      <button id="allDone" class="btn ${p.done === p.total ? "ghost" : ""}">${p.done === p.total ? "Zurücksetzen" : "Alles erledigt"}</button>
     </div>
-    <div class="card">
+    <div class="section">
       <h2>Notiz</h2>
       <textarea id="note" class="note" placeholder="Wie lief's? Projekt, Gefühl, Schmerzen …">${escapeHtml(data.note || "")}</textarea>
     </div>`;
@@ -121,10 +125,10 @@ function renderToday() {
   s.exercises.forEach(ex => {
     const done = !!data.done[ex.id];
     const last = ex.weight ? lastWeight(ex.id, k) : null;
-    const el = document.createElement("div");
+    const el = document.createElement("li");
     el.className = "ex" + (done ? " done" : "");
     el.innerHTML = `
-      <button class="check" aria-label="Erledigt">${done ? "✓" : ""}</button>
+      <button class="check" aria-label="Erledigt"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
       <div class="exbody">
         <div class="exname">${ex.name}</div>
         <div class="exdetail">${ex.detail}</div>
@@ -138,7 +142,7 @@ function renderToday() {
       dd.done[ex.id] = !dd.done[ex.id];
       if (!dd.done[ex.id]) delete dd.done[ex.id];
       save(); renderToday();
-      if (progressOf(d).done === progressOf(d).total) toast("Training geschafft! 💪");
+      if (progressOf(d).done === progressOf(d).total) toast("Training geschafft");
     });
     const inp = el.querySelector("input");
     if (inp) inp.addEventListener("change", () => {
@@ -154,7 +158,7 @@ function renderToday() {
     const allDone = s.exercises.every(e => dd.done[e.id]);
     s.exercises.forEach(e => { if (allDone) delete dd.done[e.id]; else dd.done[e.id] = true; });
     save(); renderToday();
-    if (!allDone) toast("Training geschafft! 💪");
+    if (!allDone) toast("Training geschafft");
   });
   document.getElementById("note").addEventListener("input", e => { dayData(k).note = e.target.value; save(); });
 }
@@ -178,24 +182,24 @@ function renderWeek() {
   grid.innerHTML = "";
   for (let i = 0; i < 7; i++) {
     const d = addDays(mon, i), k = keyOf(d), p = progressOf(d);
-    let sym = "–", cls = "off";
+    let cls = "off";
     if (p) {
-      if (p.done === p.total) { sym = "✓"; cls = "full"; }
-      else if (p.done > 0) { sym = "◐"; cls = "part"; }
-      else if (k < tk) { sym = "✕"; cls = "miss"; }
-      else { sym = "○"; cls = ""; }
+      if (p.done === p.total) cls = "full";
+      else if (p.done > 0) cls = "part";
+      else if (k < tk) cls = "miss";
+      else cls = "open";
     }
     const el = document.createElement("button");
     el.className = "wd" + (k === tk ? " today" : "");
-    el.style.color = "inherit";
-    el.innerHTML = `<div class="l">${SHORT[d.getDay()]}</div><div class="l">${d.getDate()}.</div><div class="s ${cls}">${sym}</div>`;
+    el.innerHTML = `<div class="l">${SHORT[d.getDay()]}</div><div class="n">${d.getDate()}</div><div class="dot ${cls}"></div>`;
     el.addEventListener("click", () => { currentDay = d; switchView("today"); });
     grid.appendChild(el);
   }
   const cnt = trainedCount(mon);
   const score = document.getElementById("weekScore");
   score.textContent = `${cnt}/4 Trainings`;
-  score.className = "pill" + (cnt >= 4 ? " ok" : "");
+  score.className = "count" + (cnt >= 4 ? " ok" : "");
+  document.getElementById("weekLabel").textContent = `KW ${isoWeek(mon)} · ${mon.getDate()}.${mon.getMonth() + 1}. – ${addDays(mon, 6).getDate()}.${addDays(mon, 6).getMonth() + 1}.`;
 
   // Verlauf: letzte 8 Wochen
   const hist = document.getElementById("history");
@@ -204,7 +208,7 @@ function renderWeek() {
     const m = addDays(mon, -7 * w), c = trainedCount(m);
     const col = document.createElement("div");
     col.className = "hcol";
-    col.innerHTML = `<div class="hval">${c}</div><div class="hbar ${c < 3 ? "low" : ""}" style="height:${(c / 4) * 80}%"></div><div class="hlabel">KW${isoWeek(m)}</div>`;
+    col.innerHTML = `<div class="hval">${c}</div><div class="hbar ${c < 3 ? "low" : ""}" style="height:${(c / 4) * 80}%"></div><div class="hlabel">${isoWeek(m)}</div>`;
     hist.appendChild(col);
   }
 
@@ -219,127 +223,13 @@ function renderWeek() {
   document.getElementById("statTotal").textContent = total;
 }
 
-/* ---------- UI: Protein ---------- */
-function targetG() {
-  const bw = Number(state.settings.bodyweight);
-  return bw ? Math.round(bw * Number(state.settings.factor || 1.8)) : null;
-}
-function sumDay(k, src) {
-  return (state.protein[k] || []).filter(e => !src || e.src === src).reduce((a, e) => a + e.g, 0);
-}
-function addProtein(g, src) {
-  g = Math.round(Number(g));
-  if (!g || g <= 0) return;
-  const k = keyOf(today());
-  (state.protein[k] = state.protein[k] || []).push({ g, src, t: Date.now() });
-  save(); renderProtein();
-  toast(`+${g} g ${src === "powder" ? "(Pulver)" : ""}`);
-}
-
-function renderProtein() {
-  const k = keyOf(today()), tgt = targetG(), sum = sumDay(k);
-  document.getElementById("proteinToday").textContent = tgt ? `${sum} / ${tgt} g` : `${sum} g`;
-  document.getElementById("proteinToday").className = "pill" + (tgt && sum >= tgt ? " ok" : "");
-  document.getElementById("proteinBar").style.width = tgt ? Math.min(100, (sum / tgt) * 100) + "%" : "0";
-  document.getElementById("proteinTargetText").textContent = tgt
-    ? `Ziel: ${tgt} g (${state.settings.factor} g × ${state.settings.bodyweight} kg)`
-    : "Trag dein Körpergewicht in den Einstellungen ein, dann bekommst du ein Tagesziel.";
-  document.getElementById("addScoop").textContent = `+ Shake (${state.settings.scoop} g)`;
-
-  const list = document.getElementById("proteinList");
-  list.innerHTML = "";
-  (state.protein[k] || []).forEach((e, i) => {
-    const li = document.createElement("li");
-    const time = new Date(e.t).toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" });
-    li.innerHTML = `<span>${e.g} g<span class="tag ${e.src}">${e.src === "powder" ? "Pulver" : "Essen"}</span></span>
-      <span><span class="muted small">${time}</span><button class="del" aria-label="Löschen">×</button></span>`;
-    li.querySelector(".del").addEventListener("click", () => { state.protein[k].splice(i, 1); save(); renderProtein(); });
-    list.appendChild(li);
-  });
-
-  renderReco(tgt);
-  renderProteinChart(tgt);
-}
-
-function renderReco(tgt) {
-  const el = document.getElementById("reco");
-  const bw = Number(state.settings.bodyweight);
-  if (!bw) { el.innerHTML = `<p class="muted">Erst Körpergewicht in den Einstellungen eintragen.</p>`; return; }
-
-  // letzte 7 Tage inkl. heute, nur Tage mit Einträgen
-  const days = [];
-  for (let i = 0; i < 7; i++) {
-    const k = keyOf(addDays(today(), -i));
-    if ((state.protein[k] || []).length) days.push(k);
-  }
-  if (days.length < 3) {
-    el.innerHTML = `<p class="muted">Trag an mindestens 3 Tagen dein Protein ein (bisher ${days.length}). Dann kann ich sagen, ob du über das Essen genug bekommst.</p>`;
-    return;
-  }
-  const foodAvg = Math.round(days.reduce((a, k) => a + sumDay(k, "food"), 0) / days.length);
-  const minG = Math.round(bw * 1.6);
-  const scoop = Number(state.settings.scoop) || 25;
-
-  if (foodAvg >= minG) {
-    el.innerHTML = `<div class="reco-verdict no">Nein, nicht nötig</div>
-      <p>Über das Essen kommst du im Schnitt auf <b>${foodAvg} g</b> pro Tag. Das Minimum für Kraftaufbau (1,6 g/kg = ${minG} g) schaffst du schon ohne Pulver.</p>`;
-  } else {
-    const gap = (tgt || minG) - foodAvg;
-    const shakes = Math.max(1, Math.round(gap / scoop));
-    el.innerHTML = `<div class="reco-verdict yes">Ja, lohnt sich</div>
-      <p>Über das Essen kommst du im Schnitt auf <b>${foodAvg} g</b>, Minimum wären ${minG} g. Bis zu deinem Ziel fehlen ca. <b>${gap} g</b> pro Tag, das sind etwa <b>${shakes} Shake${shakes > 1 ? "s" : ""}</b> à ${scoop} g. Mehr Protein über das Essen wäre die Alternative.</p>`;
-  }
-  el.innerHTML += `<p class="muted small">Basis: ${days.length} eingetragene Tage der letzten Woche, nur Essen gezählt.</p>`;
-}
-
-function renderProteinChart(tgt) {
-  const chart = document.getElementById("proteinChart");
-  chart.innerHTML = "";
-  const vals = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = addDays(today(), -i), k = keyOf(d);
-    vals.push({ d, f: sumDay(k, "food"), p: sumDay(k, "powder") });
-  }
-  const max = Math.max(tgt || 0, ...vals.map(v => v.f + v.p), 50) * 1.1;
-  const h = 120; // px Balkenbereich
-  vals.forEach(v => {
-    const col = document.createElement("div");
-    col.className = "bcol";
-    col.innerHTML = `<div class="bstack" style="height:${((v.f + v.p) / max) * h}px">
-        <div class="f" style="flex:${v.f}"></div><div class="p" style="flex:${v.p}"></div></div>
-      <div class="blabel">${SHORT[v.d.getDay()]}</div>`;
-    chart.appendChild(col);
-  });
-  if (tgt) {
-    const line = document.createElement("div");
-    line.className = "goalline";
-    line.style.bottom = (20 + (tgt / max) * h) + "px";
-    chart.appendChild(line);
-  }
-}
-
-document.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => addProtein(b.dataset.add, "food")));
-document.getElementById("addScoop").addEventListener("click", () => addProtein(state.settings.scoop, "powder"));
-document.getElementById("proteinForm").addEventListener("submit", e => {
-  e.preventDefault();
-  const inp = document.getElementById("proteinInput");
-  addProtein(inp.value, document.getElementById("proteinSrc").value);
-  inp.value = "";
-});
-
 /* ---------- UI: Einstellungen ---------- */
 function renderSettings() {
-  document.getElementById("setWeight").value = state.settings.bodyweight ?? "";
-  document.getElementById("setFactor").value = state.settings.factor;
-  document.getElementById("setScoop").value = state.settings.scoop;
   document.getElementById("setStart").value = state.settings.startDate;
 }
-[["setWeight", "bodyweight"], ["setFactor", "factor"], ["setScoop", "scoop"], ["setStart", "startDate"]].forEach(([id, key]) => {
-  document.getElementById(id).addEventListener("change", e => {
-    const v = e.target.value;
-    state.settings[key] = key === "startDate" ? (v || keyOf(mondayOf(today()))) : (v === "" ? null : Number(v));
-    save(); toast("Gespeichert");
-  });
+document.getElementById("setStart").addEventListener("change", e => {
+  state.settings.startDate = e.target.value || keyOf(mondayOf(today()));
+  save(); toast("Gespeichert");
 });
 
 document.getElementById("exportBtn").addEventListener("click", () => {
@@ -355,14 +245,14 @@ document.getElementById("importInput").addEventListener("change", async e => {
   if (!file) return;
   try {
     const data = JSON.parse(await file.text());
-    if (!data.days || !data.protein) throw new Error();
-    state = { ...DEFAULTS, ...data, settings: { ...DEFAULTS.settings, ...data.settings } };
+    if (!data.days) throw new Error();
+    state = { days: data.days, settings: { ...DEFAULTS.settings, ...data.settings } };
     save(); renderAll(); toast("Backup importiert");
   } catch { toast("Ungültige Datei"); }
   e.target.value = "";
 });
 document.getElementById("resetBtn").addEventListener("click", () => {
-  if (confirm("Wirklich alle Trainings- und Proteindaten löschen?")) {
+  if (confirm("Wirklich alle Trainingsdaten löschen?")) {
     state = structuredClone(DEFAULTS);
     state.settings.startDate = keyOf(mondayOf(today()));
     save(); renderAll(); toast("Daten gelöscht");
@@ -370,14 +260,11 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 });
 
 /* ---------- Navigation ---------- */
-const TITLES = { today: "Training", week: "Woche", protein: "Protein", settings: "Einstellungen" };
 function switchView(v) {
   document.querySelectorAll(".view").forEach(s => s.classList.toggle("active", s.id === "view-" + v));
   document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.view === v));
-  document.getElementById("viewTitle").textContent = TITLES[v];
   if (v === "today") renderToday();
   if (v === "week") renderWeek();
-  if (v === "protein") renderProtein();
   if (v === "settings") renderSettings();
   window.scrollTo(0, 0);
 }
