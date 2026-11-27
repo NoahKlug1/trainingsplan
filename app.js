@@ -7,10 +7,22 @@ const KEY = "trainingsplan-v1";
 // overrides: "YYYY-MM-DD": Wochentag (0–6), dessen Training an diesem Datum stattfindet
 // exMeta:    id → { name, group, muscles } – merkt sich auch gelöschte Übungen für Verlauf & Heatmap
 function blank() { return { settings: { startDate: null }, days: {}, plan: null, overrides: {}, exMeta: {} }; }
+// einmalige Ergänzungen für Pläne, die schon vorher bearbeitet wurden
+function migrate(st) {
+  if (st.settings.stretchAdded) return false;
+  if (st.plan) {
+    Object.entries(STRETCH).forEach(([wd, ex]) => {
+      const s = st.plan[wd];
+      if (s && !s.rest && s.exercises && !s.exercises.some(e => e.id === ex.id)) s.exercises.push({ ...ex });
+    });
+  }
+  st.settings.stretchAdded = true;
+  return true;
+}
 function normalize(raw) {
   const s = blank();
   if (!raw || typeof raw !== "object") return s;
-  return {
+  const st = {
     settings: { ...s.settings, ...raw.settings },
     days: raw.days || {},
     plan: raw.plan || null,
@@ -18,6 +30,9 @@ function normalize(raw) {
     exMeta: raw.exMeta || {},
     updatedAt: raw.updatedAt || 0
   };
+  // nicht aufzählbar → landet nicht im JSON (localStorage / Cloud)
+  if (migrate(st)) Object.defineProperty(st, "migrated", { value: true, configurable: true });
+  return st;
 }
 let state;
 try { state = normalize(JSON.parse(localStorage.getItem(KEY))); } catch (e) { state = blank(); }
@@ -51,7 +66,7 @@ function isoWeek(d) {
 function fmtDate(d) { return d.toLocaleDateString("de-AT", { day: "numeric", month: "long", year: "numeric" }); }
 function fmtShort(d) { return `${d.getDate()}.${d.getMonth() + 1}.`; }
 
-if (!state.settings.startDate) { state.settings.startDate = keyOf(mondayOf(today())); save(); }
+if (!state.settings.startDate || state.migrated) { delete state.migrated; state.settings.startDate ||= keyOf(mondayOf(today())); save(); }
 
 function isDeloadWeek(d) {
   const start = mondayOf(fromKey(state.settings.startDate));

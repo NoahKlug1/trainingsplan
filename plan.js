@@ -98,6 +98,14 @@ const EXERCISE_LIBRARY = {
   ]
 };
 
+// Kurzes Dehnen am Ende jedes Trainingstags (~5 min), zählt nicht in die Heatmap
+const STRETCH = {
+  1: { id: "mo-stretch", name: "Dehnen", detail: "5 min · Unterarmbeuger + -strecker, Brust am Türrahmen, je 30 s", muscles: [] },
+  3: { id: "mi-stretch", name: "Dehnen", detail: "5 min · Schulter Cross-Body, Trizeps über Kopf, je 30 s", muscles: [] },
+  4: { id: "do-stretch", name: "Dehnen", detail: "5 min · Unterarme, Lat an der Stange, je 30 s", muscles: [] },
+  6: { id: "sa-stretch", name: "Dehnen", detail: "5 min · Frog Stretch 45 s, Hüftbeuger je 30 s", muscles: [] }
+};
+
 const DEFAULT_PLAN = {
   1: {
     title: "Bouldern + Push",
@@ -149,3 +157,4 @@ const DEFAULT_PLAN = {
   },
   0: { title: "Ruhetag", rest: true }
 };
+Object.entries(STRETCH).forEach(([wd, ex]) => DEFAULT_PLAN[wd].exercises.push({ ...ex }));

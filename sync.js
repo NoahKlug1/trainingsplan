@@ -34,6 +34,7 @@ function adopt(row) {
   state = normalize(row.data);
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
   syncMeta = { userId: user.id, syncedAt: row.updated_at, dirty: false }; saveMeta();
+  if (state.migrated) { delete state.migrated; save(); } // ergänzter Stand zurück in die Cloud
   if (sheet.classList.contains("hidden")) renderAll();
 }
 
