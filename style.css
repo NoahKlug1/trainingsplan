@@ -1,36 +1,19 @@
 :root {
-  --bg: #fafaf9;
-  --surface: #ffffff;
-  --text: #18181b;
-  --muted: #71717a;
-  --faint: #a1a1aa;
-  --line: #e7e7e4;
-  --field: #f4f4f2;
-  --accent: #2f6b4f;
-  --accent-soft: #e6efe9;
-  --accent-strong: #234f3b;
-  --body: #ffffff;
-  --body-line: #27272a;
-  --danger: #b42318;
+  color-scheme: dark;
+  --bg: #111113;
+  --surface: #1a1a1d;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --faint: #63636b;
+  --line: #2a2a2e;
+  --field: #232327;
+  --accent: #6cc597;
+  --accent-soft: #1e2c25;
+  --accent-strong: #8fd6b0;
+  --body: #2e2e33;
+  --body-line: #0b0b0c;
+  --danger: #f97066;
   --radius: 16px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #111113;
-    --surface: #1a1a1d;
-    --text: #f4f4f5;
-    --muted: #a1a1aa;
-    --faint: #63636b;
-    --line: #2a2a2e;
-    --field: #232327;
-    --accent: #6cc597;
-    --accent-soft: #1e2c25;
-    --accent-strong: #8fd6b0;
-    --body: #2e2e33;
-    --body-line: #0b0b0c;
-    --danger: #f97066;
-  }
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -112,7 +95,7 @@ h2 { margin: 0; font-size: .8rem; font-weight: 600; text-transform: uppercase; l
 .check svg { width: 15px; height: 15px; stroke-width: 2.6; opacity: 0; }
 .ex.done .check { background: var(--accent); border-color: var(--accent); }
 .ex.done .check svg { opacity: 1; }
-@media (prefers-color-scheme: dark) { .ex.done .check { color: #111113; } }
+.ex.done .check { color: #111113; }
 .exbody { flex: 1; min-width: 0; }
 .exname { font-weight: 550; transition: color .15s; }
 .exdetail { color: var(--muted); font-size: .88rem; margin-top: 2px; }
