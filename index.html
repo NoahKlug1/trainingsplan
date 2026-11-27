@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14171c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Training">
+  <title>Trainingsplan</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="viewTitle">Heute</h1>
+  </header>
+
+  <main>
+    <!-- HEUTE -->
+    <section id="view-today" class="view active">
+      <div class="daynav">
+        <button id="prevDay" class="icon-btn" aria-label="Vorheriger Tag">‹</button>
+        <div class="daylabel">
+          <div id="dayName" class="dayname"></div>
+          <div id="dayDate" class="daydate"></div>
+        </div>
+        <button id="nextDay" class="icon-btn" aria-label="Nächster Tag">›</button>
+      </div>
+      <div id="deloadBanner" class="banner hidden">Deload-Woche: gleiche Übungen, ca. 60 % vom Gewicht</div>
+      <div id="dayCard"></div>
+    </section>
+
+    <!-- WOCHE -->
+    <section id="view-week" class="view">
+      <div class="card">
+        <div class="row-between">
+          <h2>Diese Woche</h2>
+          <span id="weekScore" class="pill"></span>
+        </div>
+        <div id="weekGrid" class="weekgrid"></div>
+      </div>
+      <div class="card">
+        <h2>Verlauf</h2>
+        <p class="muted small">Erledigte Trainingstage pro Woche (Plan: 4)</p>
+        <div id="history" class="history"></div>
+      </div>
+      <div class="card stats">
+        <div><span id="statStreak" class="big">0</span><span class="muted small">Wochen in Folge ≥ 3 Trainings</span></div>
+        <div><span id="statTotal" class="big">0</span><span class="muted small">Trainings gesamt</span></div>
+      </div>
+    </section>
+
+    <!-- PROTEIN -->
+    <section id="view-protein" class="view">
+      <div class="card">
+        <div class="row-between">
+          <h2>Heute</h2>
+          <span id="proteinToday" class="pill"></span>
+        </div>
+        <div class="progress"><div id="proteinBar"></div></div>
+        <p id="proteinTargetText" class="muted small"></p>
+        <div class="quick">
+          <button class="chip" data-add="10">+10 g</button>
+          <button class="chip" data-add="20">+20 g</button>
+          <button class="chip" data-add="30">+30 g</button>
+          <button class="chip powder" id="addScoop">+ Shake</button>
+        </div>
+        <form id="proteinForm" class="inline-form">
+          <input id="proteinInput" type="number" inputmode="numeric" min="1" max="300" placeholder="g">
+          <select id="proteinSrc">
+            <option value="food">Essen</option>
+            <option value="powder">Pulver</option>
+          </select>
+          <button type="submit" class="btn">Hinzufügen</button>
+        </form>
+        <ul id="proteinList" class="entrylist"></ul>
+      </div>
+
+      <div class="card" id="recoCard">
+        <h2>Proteinpulver wieder nehmen?</h2>
+        <div id="reco"></div>
+      </div>
+
+      <div class="card">
+        <h2>Letzte 7 Tage</h2>
+        <div id="proteinChart" class="barchart"></div>
+        <p class="muted small"><span class="legend food"></span>Essen <span class="legend powder"></span>Pulver <span class="legend line"></span>Ziel</p>
+      </div>
+    </section>
+
+    <!-- EINSTELLUNGEN -->
+    <section id="view-settings" class="view">
+      <div class="card">
+        <h2>Körper & Protein</h2>
+        <label class="field">Körpergewicht (kg)
+          <input id="setWeight" type="number" inputmode="decimal" min="30" max="200" step="0.5" placeholder="z. B. 70">
+        </label>
+        <label class="field">Proteinziel (g pro kg)
+          <input id="setFactor" type="number" inputmode="decimal" min="1.2" max="2.5" step="0.1">
+        </label>
+        <label class="field">Protein pro Shake (g)
+          <input id="setScoop" type="number" inputmode="numeric" min="5" max="60" step="1">
+        </label>
+      </div>
+      <div class="card">
+        <h2>Plan</h2>
+        <label class="field">Startdatum (für Deload alle 6 Wochen)
+          <input id="setStart" type="date">
+        </label>
+        <p class="muted small">Montag: Fingerboard in ungeraden Kalenderwochen, Campus Board in geraden.</p>
+      </div>
+      <div class="card">
+        <h2>Daten</h2>
+        <p class="muted small">Alles wird nur lokal auf diesem Gerät gespeichert. Mach ab und zu ein Backup.</p>
+        <div class="btnrow">
+          <button id="exportBtn" class="btn secondary">Backup exportieren</button>
+          <label class="btn secondary">Backup importieren
+            <input id="importInput" type="file" accept="application/json" hidden>
+          </label>
+        </div>
+        <button id="resetBtn" class="btn danger">Alle Daten löschen</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="today"><span class="ti">●</span>Heute</button>
+    <button class="tab" data-view="week"><span class="ti">▦</span>Woche</button>
+    <button class="tab" data-view="protein"><span class="ti">◆</span>Protein</button>
+    <button class="tab" data-view="settings"><span class="ti">⚙</span>Einstellungen</button>
+  </nav>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="plan.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
