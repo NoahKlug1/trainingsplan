@@ -30,10 +30,7 @@ html, body {
 
 /* App-Shell: nur #scroller scrollt, die Tableiste sitzt fest im Layout (iOS verschiebt sonst position:fixed) */
 html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-/* Höhe: als iPhone-App meldet iOS „100 %“ oft kürzer als den Bildschirm (Tableiste endet zu hoch),
-   deshalb setzt index.html --app-h dort auf die echte Bildschirmhöhe */
-body { position: fixed; top: 0; left: 0; right: 0; height: 100vh; height: 100dvh; height: var(--app-h, 100dvh);
-  display: flex; flex-direction: column; }
+body { position: fixed; inset: 0; display: flex; flex-direction: column; }
 .scroller { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
 
 button, input, select, textarea { font: inherit; color: inherit; }
