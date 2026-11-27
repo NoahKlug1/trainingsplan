@@ -12,15 +12,12 @@ const MUSCLES = {
   forearms: "Unterarme",
   abs: "Bauch",
   obliques: "Seitl. Bauch",
-  quads: "Oberschenkel",
-  calves: "Waden",
   traps: "Trapez",
   reardelts: "Hintere Schulter",
   lats: "Latissimus",
   triceps: "Trizeps",
   lowerback: "Unterer Rücken",
-  glutes: "Gesäß",
-  hamstrings: "Beinbeuger"
+  glutes: "Gesäß"
 };
 
 const DEFAULT_PLAN = {

@@ -1,11 +1,12 @@
 // Version erhöhen, wenn sich Dateien ändern → Handy lädt neue Version
-const CACHE = "trainingsplan-v3";
+const CACHE = "trainingsplan-v4";
 const ASSETS = [
   "./",
   "index.html",
   "style.css",
   "plan.js",
   "app.js",
+  "body-shapes.js",
   "body.js",
   "manifest.webmanifest",
   "icons/icon-192.png",
