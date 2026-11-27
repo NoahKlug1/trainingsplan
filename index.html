@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="scroller" class="scroller">
   <main>
     <!-- HEUTE -->
     <section id="view-today" class="view active">
@@ -108,6 +109,11 @@
       </header>
 
       <div class="section">
+        <h2>Konto</h2>
+        <div id="account"></div>
+      </div>
+
+      <div class="section">
         <h2>Wochenplan</h2>
         <div id="planList" class="list"></div>
         <p class="hint">Tippe auf einen Tag, um Übungen zu bearbeiten, hinzuzufügen oder umzusortieren.</p>
@@ -124,7 +130,7 @@
 
       <div class="section">
         <h2>Daten</h2>
-        <p class="hint">Alles bleibt lokal auf diesem Gerät. Mach ab und zu ein Backup.</p>
+        <p class="hint">Ohne Konto bleibt alles nur auf diesem Gerät. Ein Backup als Datei geht immer.</p>
         <div class="list">
           <button id="exportBtn" class="list-btn">Backup exportieren</button>
           <label class="list-btn">Backup importieren
@@ -135,6 +141,7 @@
       </div>
     </section>
   </main>
+  </div>
 
   <nav class="tabbar">
     <button class="tab active" data-view="today">
@@ -161,6 +168,9 @@
   <script src="plan.js"></script>
   <script src="body-shapes.js"></script>
   <script src="body.js"></script>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="app.js"></script>
+  <script src="sync.js"></script>
 </body>
 </html>

@@ -8,7 +8,8 @@ PWA zum Abhaken des wöchentlichen Kletter- und Krafttrainings mit Gewichts-Trac
 - **Woche**: Wochenübersicht, Verlauf der letzten 8 Wochen, Streak
 - **Fortschritt**: Muskel-Heatmap (vorne/hinten, 7 oder 30 Tage) und Gewichtsverlauf pro Übung
 - Deload-Hinweis jede 6. Woche, Montag wechselt Fingerboard (ungerade KW) und Campus Board (gerade KW)
-- Offlinefähig, installierbar, Daten bleiben lokal (`localStorage`), Backup als JSON
+- **Konto (optional, Supabase)**: Anmelden mit E-Mail und Passwort, Daten werden gesichert und zwischen Geräten synchronisiert
+- Offlinefähig, installierbar, ohne Konto bleiben die Daten lokal (`localStorage`), Backup als JSON
 
 ## Wochenplan
 | Tag | Einheit |
@@ -22,6 +23,12 @@ PWA zum Abhaken des wöchentlichen Kletter- und Krafttrainings mit Gewichts-Trac
 | So | Ruhe |
 
 Plan ändern: in der App unter Einstellungen → Wochenplan. `plan.js` ist nur die Vorlage (nach Änderungen in `sw.js` die `CACHE`-Version erhöhen).
+
+## Konten einrichten (Supabase)
+1. Projekt auf supabase.com anlegen.
+2. Im *SQL Editor* den Inhalt von `supabase.sql` ausführen (Tabelle + Row Level Security).
+3. *Authentication → URL Configuration*: Site URL und Redirect URL auf die GitHub-Pages-Adresse setzen.
+4. *Project Settings → API*: Project URL und anon/publishable Key in `config.js` eintragen.
 
 ## Deployment (GitHub Pages)
 Settings → Pages → Source: *Deploy from a branch* → `main` / `root`.

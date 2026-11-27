@@ -15,14 +15,17 @@ function normalize(raw) {
     days: raw.days || {},
     plan: raw.plan || null,
     overrides: raw.overrides || {},
-    exMeta: raw.exMeta || {}
+    exMeta: raw.exMeta || {},
+    updatedAt: raw.updatedAt || 0
   };
 }
 let state;
 try { state = normalize(JSON.parse(localStorage.getItem(KEY))); } catch (e) { state = blank(); }
 function save() {
+  state.updatedAt = Date.now();
   try { localStorage.setItem(KEY, JSON.stringify(state)); }
   catch (e) { toast("Speichern fehlgeschlagen"); }
+  if (typeof onLocalChange === "function") onLocalChange(); // Cloud-Sync (sync.js)
 }
 
 /* ---------- Datum ---------- */
@@ -697,8 +700,8 @@ function switchView(v) {
   if (v === "today") renderToday();
   if (v === "week") renderWeek();
   if (v === "progress") renderProgress();
-  if (v === "settings") renderSettings();
-  window.scrollTo(0, 0);
+  if (v === "settings") { renderSettings(); if (typeof renderAccount === "function") renderAccount(); }
+  document.getElementById("scroller").scrollTop = 0;
 }
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
   if (t.dataset.view === "today") currentDay = today();

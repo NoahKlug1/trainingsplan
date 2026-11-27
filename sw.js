@@ -1,5 +1,5 @@
 // Version erhöhen, wenn sich Dateien ändern → Handy lädt neue Version
-const CACHE = "trainingsplan-v7";
+const CACHE = "trainingsplan-v8";
 const ASSETS = [
   "./",
   "index.html",
@@ -8,6 +8,8 @@ const ASSETS = [
   "app.js",
   "body-shapes.js",
   "body.js",
+  "config.js",
+  "sync.js",
   "manifest.webmanifest",
   "icons/icon-192.png",
   "icons/icon-512.png",
@@ -29,6 +31,8 @@ self.addEventListener("activate", e => {
 // Network first (Updates kommen sofort an), offline aus dem Cache
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
+  // Supabase-Anfragen (Login, Daten) nie cachen
+  if (new URL(e.request.url).hostname.endsWith(".supabase.co")) return;
   e.respondWith(
     fetch(e.request)
       .then(res => {

@@ -28,7 +28,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-body { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+/* App-Shell: nur #scroller scrollt, die Tableiste sitzt fest im Layout (iOS verschiebt sonst position:fixed) */
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+body { position: fixed; inset: 0; display: flex; flex-direction: column; }
+.scroller { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
 
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -175,7 +178,7 @@ h2 { margin: 0; font-size: .8rem; font-weight: 600; text-transform: uppercase; l
 
 /* Tabbar */
 .tabbar {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+  position: relative; flex: none; z-index: 10;
   display: flex; justify-content: center;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px);
@@ -214,7 +217,7 @@ h2 { margin: 0; font-size: .8rem; font-weight: 600; text-transform: uppercase; l
 .rest + .moved { justify-content: center; margin-top: 12px; }
 
 /* Sheet / Overlay */
-body.locked { overflow: hidden; }
+.locked .scroller { overflow: hidden; }
 .sheet {
   position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-end; justify-content: center;
   background: rgba(0, 0, 0, 0); transition: background .2s ease;
@@ -364,3 +367,21 @@ body.locked { overflow: hidden; }
 .pk-in { flex: none; font-size: .75rem; color: var(--accent); font-weight: 500; }
 .ed-ex.flash { animation: flash 1.2s ease; }
 @keyframes flash { 0%, 30% { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); } 100% { border-color: var(--line); box-shadow: none; } }
+
+/* Konto */
+.btn.accent { background: var(--accent); color: #111113; }
+.auth { display: grid; gap: 10px; }
+.auth input {
+  width: 100%; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface); font-size: 1rem;
+}
+.auth input:focus { outline: none; border-color: var(--accent); }
+.linkbtn { background: none; border: none; color: var(--muted); font-size: .88rem; padding: 6px; justify-self: center; }
+.auth-msg { text-align: center; min-height: 1.2em; margin: 0; }
+.auth-msg:empty { display: none; }
+.list-btn.static { cursor: default; }
+.list-btn.static:active { background: none; }
+.acc-mail { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sync-state { font-size: .82rem; color: var(--muted); white-space: nowrap; }
+.sync-state.ok { color: var(--accent); }
+.sync-state.err { color: var(--danger); white-space: normal; text-align: right; }
